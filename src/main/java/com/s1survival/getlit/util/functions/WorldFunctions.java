@@ -18,7 +18,7 @@ import java.util.UUID;
 public class WorldFunctions {
     GetLit plugin;
     public WorldFunctions(GetLit getLit) {
-        // Take the instance of our main class and save in plugin.
+        // Take the instance of our main class and save in plugin
         plugin = getLit;
     }
 
