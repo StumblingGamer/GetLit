@@ -110,9 +110,9 @@ public class GetLitCommand implements CommandExecutor {
                                 && StringFunctions.isNumeric(arguments.get(3))) {
 
                             // Get the radius, spacing, and topheight to variables
-                            final int radius = StringFunctions.safeToInt(args[0]);
-                            final int spacing = StringFunctions.safeToInt(args[1]);
-                            final int topheight = StringFunctions.safeToInt(args[2]);  // May remove this, and just make it world height
+                            final int radius = StringFunctions.safeToInt(args[1])();
+                            final int spacing = StringFunctions.safeToInt(args[2])();
+                            final int topheight = StringFunctions.safeToInt(args[3])();  // May remove this, and just make it world height
 
                             // Set boundaries for the args
                             if (radius > 128 || spacing < 4 || topheight > WorldFunctions.worldHeight(sentBy)) {
