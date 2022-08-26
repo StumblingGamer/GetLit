@@ -9,6 +9,7 @@ public class PlacedTorchResult {
     private int _numTorches;
     private UUID _playerUID;
     private String _playerName;
+    private String _level;
     private int _topheight;
     private int _radius;
     private int _spacing;
@@ -19,11 +20,12 @@ public class PlacedTorchResult {
         this._success = _success;
     }
 
-    public PlacedTorchResult(boolean _success, int _numTorches, UUID _playerUID, String _playerName, int _topheight, int _radius, int _spacing, List<Location> _locations) {
+    public PlacedTorchResult(boolean _success, int _numTorches, UUID _playerUID, String _playerName, String _level, int _topheight, int _radius, int _spacing, List<Location> _locations) {
        this._success = _success;
        this._numTorches = _numTorches;
        this._playerUID = _playerUID;
        this._playerName = _playerName;
+       this._level = _level;
        this._topheight = _topheight;
        this._radius = _radius;
        this._spacing = _spacing;
@@ -62,6 +64,10 @@ public class PlacedTorchResult {
     public void set_playerName(String _playerName) {
 
        this._playerName = _playerName;
+    }
+    public String get_level() {
+
+        return _level;
     }
     public int get_topheight() {
 

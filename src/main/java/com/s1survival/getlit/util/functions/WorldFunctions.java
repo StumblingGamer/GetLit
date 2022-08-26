@@ -5,6 +5,7 @@ import com.s1survival.getlit.torch.PlacedTorch;
 import com.s1survival.getlit.torch.PlacedTorchResult;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -17,9 +18,23 @@ import java.util.UUID;
 
 public class WorldFunctions {
     GetLit plugin;
+    boolean skyLight;
     public WorldFunctions(GetLit getLit) {
         // Take the instance of our main class and save in plugin
         plugin = getLit;
+    }
+
+    public static Integer worldHeight(Player player) {
+        int wh = 320;
+        if (player == null) {
+            return wh;
+        }
+
+        // Get the world that the player currently in
+        World world = player.getLocation().getWorld();
+        int worldHeight = world.getMaxHeight();
+        wh = world.getMaxHeight();
+        return wh;
     }
 
     /**
@@ -30,54 +45,52 @@ public class WorldFunctions {
      * @param spacing Spacing
      * @param topheight Upper-height
      */
-    public PlacedTorchResult placeTorches(Player player, int radius, int spacing, int topheight) {
-        List<Location> locations = new ArrayList<>();
+    public PlacedTorchResult placeTorches(Player player, String level, int radius, int spacing, int topheight) {
+
         try {
             // Check if player is null
             if (player != null) {
                 Location playerLocation = player.getLocation(); // Get the player location (once) - player COULD move before task is complete
                 UUID key = UUID.randomUUID();  // A change key for logging purposes
                 List<PlacedTorch> torchList = new ArrayList<>();
-
+                List<Location> locations = new ArrayList<>();
                 for (int y = topheight; y > -63; y--) {
                     int x;
                     for (x = playerLocation.getBlockX() - radius; x < playerLocation.getBlockX() + radius; x += spacing) {
                         int z;
                         for (z = playerLocation.getBlockZ() - radius; z < playerLocation.getBlockZ() + radius; z += spacing) {
                             Block block = Objects.requireNonNull(playerLocation.getWorld()).getBlockAt(x, y, z); // Require a non-null block (which it will be)
+                            skyLight = false;
 
-                            if (block.getRelative(BlockFace.UP, 1).getState().update(true)) {
-                                // plugin.log.toConsole(String.valueOf(block.getRelative(BlockFace.UP, 1).getState().update(true)));
-                                if (block.canPlace(Material.TORCH.createBlockData())) {
-                                    // plugin.log.toConsole("Torch can be placed on this type: " + block.canPlace(Material.TORCH.createBlockData()),");
-                                    if (block.getRelative(BlockFace.UP, 1).getLightFromBlocks() <= 4
-                                            && block.getRelative(BlockFace.UP, 1).getLightLevel() <= 4
-                                            && block.getRelative(BlockFace.UP, 1).getLightFromSky() == 0) {
-                                        // plugin.log.toConsole("::::  LIGHT ::::");
-                                        // plugin.log.toConsole("getLightFromBlocks: " + String.valueOf(block.getRelative(BlockFace.UP, 1).getLightFromBlocks()) + " at pos: " + block.getLocation(),");
-                                        // plugin.log.toConsole("getLightLevel: " + String.valueOf(block.getRelative(BlockFace.UP, 1).getLightLevel()) + " at pos: " + block.getLocation(),");
-                                        // plugin.log.toConsole("getLightFromSky: " + String.valueOf(block.getRelative(BlockFace.UP, 1).getLightFromSky()) + " at pos: " + block.getLocation(),");
-                                        // plugin.log.toConsole("::::  LIGHT ::::");
-                                        if (block.getType().isSolid()
-                                                && block.getType() != Material.POINTED_DRIPSTONE
-                                                && block.getRelative(BlockFace.UP, 1).getType().isAir()) {
-                                            // plugin.log.toConsole("::::  BLOCKS ::::");
-                                            // plugin.log.toConsole("Placing on Type: " + block.getType().name(),");
-                                            // plugin.log.toConsole("Relative Block (UP) is AIR: " + block.getRelative(BlockFace.UP, 1).getLocation(),");
-                                            // plugin.log.toConsole("::::  BLOCKS ::::");
+                            if (block.canPlace(Material.TORCH.createBlockData())
+                                    && block.getType().isSolid()
+                                    && block.getRelative(BlockFace.UP, 1).getType().isAir()
+                                    && block.getType() != Material.POINTED_DRIPSTONE
+                                    && block.getRelative(BlockFace.UP, 1).getLightFromBlocks() <= 4
+                                    && block.getRelative(BlockFace.UP, 1).getLightLevel() <= 4
+                            ) {
 
-                                            // Place the torch
-                                            block.getRelative(BlockFace.UP, 1).setType(Material.TORCH);
-                                            // plugin.log.toConsole("Torch has been placed at pos: " + block.getRelative(BlockFace.UP, 1).getLocation(),");
-                                            // plugin.log.toConsole("");
-                                            // plugin.log.toConsole("");
-
-                                            // Create a new PlacedTorch class which records our block, person who placed it
-                                            // and then save it into the list
-                                            locations.add(block.getLocation());
-                                            torchList.add(new PlacedTorch(player.getUniqueId(), block));
+                                switch(level) {
+                                    case "surface":
+                                        // Assumption = if block gets light from sky, it is on the surface.
+                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() >= 1) {
+                                            skyLight = true;
                                         }
-                                    }
+                                        break;
+                                    case "caves":
+                                        // Assumption = if block gets no light from sky, it is not in a cave.
+                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() == 0) {
+                                            skyLight = true;
+                                        }
+                                        break;
+                                }
+
+                                if (skyLight) {
+                                    block.getRelative(BlockFace.UP, 1).setType(Material.TORCH);
+
+                                    // record our torch setting activities
+                                    locations.add(block.getLocation());
+                                    torchList.add(new PlacedTorch(player.getUniqueId(), block));
                                 }
                             }
                         }
@@ -94,6 +107,7 @@ public class WorldFunctions {
                         torchList.size(),
                         player.getUniqueId(),
                         player.getName(),
+                        level,
                         topheight,
                         radius,
                         spacing,
@@ -110,4 +124,7 @@ public class WorldFunctions {
         }
         return new PlacedTorchResult(true);
     }
+
 }
+
+

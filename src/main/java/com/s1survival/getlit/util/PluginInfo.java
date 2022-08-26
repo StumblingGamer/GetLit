@@ -16,6 +16,7 @@ public class PluginInfo {
      * @return pluginName
      */
     public static String pluginName() {
+
         return "GetLit";
     }
 
@@ -24,6 +25,7 @@ public class PluginInfo {
      * @return Message prefix
      */
     public static String prefix() {
+
         return "§f[§5GetLit§f]§r ";
     }
 }
