@@ -9,7 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +24,13 @@ public class WorldFunctions {
         plugin = getLit;
     }
 
-    public static Integer worldHeight(Player player) {
+    public static @NotNull Integer worldHeight(Player player) {
         int wh = 320;
         if (player == null) {
             return wh;
         }
 
-        // Get the world that the player currently in
+        // Get the world that the player is currently in
         World world = player.getLocation().getWorld();
         int worldHeight = world.getMaxHeight();
         wh = world.getMaxHeight();
