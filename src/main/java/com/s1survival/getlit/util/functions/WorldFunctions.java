@@ -67,7 +67,7 @@ public class WorldFunctions {
                                     && block.getRelative(BlockFace.UP, 1).getType().isAir()
                                     && block.getType() != Material.POINTED_DRIPSTONE
                                     && block.getRelative(BlockFace.UP, 1).getLightFromBlocks() <= 4
-                                    && block.getRelative(BlockFace.UP, 1).getLightLevel() <= 4
+                                    && block.getRelative(BlockFace.UP, 1).getLightLevel() <= 15
                             ) {
 
                                 switch(level) {
