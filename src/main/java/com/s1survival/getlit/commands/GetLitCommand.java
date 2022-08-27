@@ -2,6 +2,7 @@ package com.s1survival.getlit.commands;
 
 import com.s1survival.getlit.GetLit;
 
+import com.s1survival.getlit.handlers.GetLitCmdHandler;
 import com.s1survival.getlit.torch.PlacedTorch;
 import com.s1survival.getlit.torch.PlacedTorchResult;
 
@@ -22,16 +23,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class GetLitCommand implements CommandExecutor {
-    GetLit plugin;
+    GetLit GetLit;
     public GetLitCommand(GetLit getLit) {
-        plugin = getLit;
+        GetLit = getLit;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         // Check if CommandSender is an online player
         if (!(sender instanceof Player)) {
-            plugin.log.toConsole("&cThis command can not be run from the console");
+            GetLit.log.toConsole("&cThis command can not be run from the console");
             return true;
         }
 
@@ -47,7 +48,7 @@ public class GetLitCommand implements CommandExecutor {
 
         // Convert command args to a data map
         Map<Integer, String> arguments = StringFunctions.getArguments(args);
-        // plugin.log.toConsole(String.valueOf(arguments.size()));
+        // GetLit.log.toConsole(String.valueOf(arguments.size()));
 
         // Find out what type of command they are trying to do
         switch(arguments.size()) {
@@ -59,25 +60,24 @@ public class GetLitCommand implements CommandExecutor {
                     // List command - lists players recent activity (needs work)
                     case "list":
                         // Loop through all the entries in torches
-                        for (Map.Entry<UUID, List<PlacedTorch>> entry : plugin.data.torches.entrySet()) {
-                            plugin.log.toConsole("Unique key = " + entry.getKey() + " - Number of torches = " + entry.getValue().size(), true);
+                        for (Map.Entry<UUID, List<PlacedTorch>> entry : GetLit.data.torches.entrySet()) {
+                            GetLit.log.toConsole("Unique key = " + entry.getKey() + " - Number of torches = " + entry.getValue().size(), true);
                             // Loop through all the PlacedTorch records and get the location
                             for (PlacedTorch pt : entry.getValue()) {
-                                plugin.log.toConsole("Location = " + pt.getBlock().getLocation(), true);
+                                GetLit.log.toConsole("Location = " + pt.getBlock().getLocation(), true);
                             }
                         }
                         // // Alternately, if we know the key
                         // UUID key = UUID.fromString("WHATEVER MY KEY IS");
-                        // List<PlacedTorch> placedTorches = plugin.data.torches.get(key);
+                        // List<PlacedTorch> placedTorches = GetLit.data.torches.get(key);
                         // // Loop through all the PlacedTorch records and get the location
                         // for (PlacedTorch pt : placedTorches) {
                         //     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(pt.getPlayerUUID());
-                        //     plugin.log.toConsole("Player = " + offlinePlayer.getName() + " placed a torch at = " + pt.getBlock().getLocation().toString(),true);
+                        //     GetLit.log.toConsole("Player = " + offlinePlayer.getName() + " placed a torch at = " + pt.getBlock().getLocation().toString(),true);
                         // }
                         break;
 
                     // Undo Command - Coming in the future
-                    case "surface":
                     case "undo":
                         Send.playerMessage(
                                 "This functionality will be coming soon",
@@ -111,33 +111,33 @@ public class GetLitCommand implements CommandExecutor {
 
                             // Get the radius, spacing, and topheight to variables
                             final int radius = StringFunctions.safeToInt(args[1]);
-                            final int spacing = StringFunctions.safeToInt(args[2]);
+                            GetLit.data.spacing = StringFunctions.safeToInt(args[2]);
                             final int topheight = StringFunctions.safeToInt(args[3]);  // May remove this, and just make it world height
 
                             // Set boundaries for the args
-                            if (radius > 128 || spacing < 4 || topheight > WorldFunctions.worldHeight(sentBy)) {
+                            if (radius > 128 || GetLit.data.spacing < 1 || topheight > WorldFunctions.worldHeight(sentBy)) {
                                 Send.pluginUsage(sentBy);
                                 return true;
                             }
 
                             // Create a new instance of WorldFunctions and pass the instance of our main class to it
-                            WorldFunctions worldFunctions = new WorldFunctions(plugin);
+                            GetLitCmdHandler GetLitCmdHandler = new GetLitCmdHandler(GetLit);
 
                             // Call place torch
-                            PlacedTorchResult result = worldFunctions.placeTorches(sentBy, level, radius, spacing, topheight);
+                            PlacedTorchResult result = GetLitCmdHandler.placeTorches(sentBy, level, radius, GetLit.data.spacing, topheight);
 
-                            // Return the number of torches placed to the player
-                            if (result.is_success()) {
-                                Send.playerMessage(
-                                        "Lit up your world with " + result.get_numTorches() + " new torches!",
-                                        sentBy
-                                );
-                            } else {
-                                Send.playerMessage(
-                                        "Sad Face - The darkness is closing in around you!",
-                                        sentBy
-                                );
-                            }
+                            // // Return the number of torches placed to the player
+                            // if (result.is_success()) {
+                            //     Send.playerMessage(
+                            //             "Lit up your world with " + result.get_numTorches() + " new torches!",
+                            //             sentBy
+                            //     );
+                            // } else {
+                            //     Send.playerMessage(
+                            //             "Sad Face - The darkness is closing in around you!",
+                            //             sentBy
+                            //     );
+                            // }
                             return true;
                         } else {
                             // One or all of the arguments were not numbers

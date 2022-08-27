@@ -6,6 +6,9 @@ import com.s1survival.getlit.torch.PlacedTorch;
 import java.util.*;
 
 public class Data {
+    public Boolean skyLight;
+    public Integer spacing;
+
     GetLit plugin;
 
     public Data(GetLit getLit) {
@@ -13,5 +16,4 @@ public class Data {
     }
 
     public Map<UUID, List<PlacedTorch>> torches = new HashMap<>();
-
 }
