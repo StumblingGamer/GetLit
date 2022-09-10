@@ -58,6 +58,9 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
 
                         return topheight;
                     }
+                case 4: case 5: case 6:
+                    return null;
+
             }
         }
 
