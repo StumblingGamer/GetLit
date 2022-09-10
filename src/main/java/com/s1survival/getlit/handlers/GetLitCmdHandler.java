@@ -11,7 +11,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.*;
 
 public class GetLitCmdHandler {
@@ -34,13 +33,14 @@ public class GetLitCmdHandler {
             // Check if player is null
             if (player != null) {
 
+                Send.playerMessage("Attempting to light your world, please stand by...", player);
+
                 UUID key = UUID.randomUUID();  // A change key for logging purposes
                 List<PlacedTorch> torchList = new ArrayList<>();
                 List<Location> locations = new ArrayList<>();
 
                 // Build a list of all blocks in the specified radius
                 new BukkitRunnable() {
-
                     public void run() {
                         if (GetLit.data.spacing == 0) {
                             GetLit.data.torches.put(key, torchList);
@@ -57,11 +57,15 @@ public class GetLitCmdHandler {
                                     locations
                             );
 
-                            Send.playerMessage("Your world has been lit with: " + result.get_numTorches() + " torches!", player);
-                            super.cancel();
-                        } else {
-                            Send.playerMessage("Working on lighting your world! Spacing: " + GetLit.data.spacing, player);
+                            Send.playerMessage("Your world has been lit with " + result.get_numTorches() + " torches!", player);
 
+                            super.cancel();
+
+                        } else {
+
+                            //message to player was here
+
+                            // for each eligible block place torch
                             for (Block block : Objects.requireNonNull(WorldFunctions.getBlocksInRegion(player, radius, topheight, GetLit.data.spacing))) {
                                 block.getState().update(true);
                                 GetLit.data.skyLight = false;
@@ -93,6 +97,7 @@ public class GetLitCmdHandler {
                                 }
                             }  //for loop
 
+                            // reduce the spacing of torches by 2 for next iteration
                             if (GetLit.data.spacing <= 2) {
                                 GetLit.data.spacing--;
                             } else {
@@ -100,14 +105,14 @@ public class GetLitCmdHandler {
                             }
                         }
                     }
-                }.runTaskTimer(GetLit, 0, 20L); // repeat every 5 seconds
+                }.runTaskTimer(GetLit, 0, 10L); // repeat every half a tick
 
                 // Now we're done, add that list to our map in the Data class which we reference from our main instance
                 // We'll use the key we created as the key for the map, and we can always undo an individual change now
                 // by referencing the key which would give us the list of blocks and people back.
                 // This list will clear on restart unless you save it to file
 
-
+                return new PlacedTorchResult(true);
             } else {
 
                 return new PlacedTorchResult(false);
@@ -115,8 +120,9 @@ public class GetLitCmdHandler {
         } catch (Exception torch) {
             GetLit.log.toConsole("placing torch");
             GetLit.log.toConsole(torch.getMessage());
+            return new PlacedTorchResult(false);
         }
-        return new PlacedTorchResult(true);
+        // return new PlacedTorchResult(true);
     }
 }
 

@@ -94,8 +94,8 @@ public class GetLitCommand implements CommandExecutor {
                 }
                 break;
 
-            // There are 4 arguments in the command (ie: /getlit surface 1 2 3)
-            case 4:
+            // There are 3 arguments in the command (ie: /getlit surface 1 2)
+            case 3:
                 switch (arguments.get(0).toLowerCase()) {
 
                     // Command to light up only blocks on the surface or caves
@@ -106,13 +106,12 @@ public class GetLitCommand implements CommandExecutor {
 
                         // Check if last 3 args are numeric
                         if (StringFunctions.isNumeric(arguments.get(1))
-                                && StringFunctions.isNumeric(arguments.get(2))
-                                && StringFunctions.isNumeric(arguments.get(3))) {
+                                && StringFunctions.isNumeric(arguments.get(2))) {
 
                             // Get the radius, spacing, and topheight to variables
                             final int radius = StringFunctions.safeToInt(args[1]);
-                            GetLit.data.spacing = StringFunctions.safeToInt(args[2]);
-                            final int topheight = StringFunctions.safeToInt(args[3]);  // May remove this, and just make it world height
+                            GetLit.data.spacing = 20; // StringFunctions.safeToInt(args[2]);
+                            final int topheight = StringFunctions.safeToInt(args[2]);  // May remove this, and just make it world height
 
                             // Set boundaries for the args
                             if (radius > 128 || GetLit.data.spacing < 1 || topheight > WorldFunctions.worldHeight(sentBy)) {
@@ -126,18 +125,18 @@ public class GetLitCommand implements CommandExecutor {
                             // Call place torch
                             PlacedTorchResult result = GetLitCmdHandler.placeTorches(sentBy, level, radius, GetLit.data.spacing, topheight);
 
-                            // // Return the number of torches placed to the player
-                            // if (result.is_success()) {
-                            //     Send.playerMessage(
-                            //             "Lit up your world with " + result.get_numTorches() + " new torches!",
-                            //             sentBy
-                            //     );
-                            // } else {
-                            //     Send.playerMessage(
-                            //             "Sad Face - The darkness is closing in around you!",
-                            //             sentBy
-                            //     );
-                            // }
+                        //     // Return the number of torches placed to the player
+                        //     if (result.is_success()) {
+                        //         Send.playerMessage(
+                        //                 "Lit up your world with " + result.get_numTorches() + " new torches!",
+                        //                 sentBy
+                        //         );
+                        //     } else {
+                        //         Send.playerMessage(
+                        //                 "Sad Face - The darkness is closing in around you!",
+                        //                 sentBy
+                        //         );
+                        //     }
                             return true;
                         } else {
                             // One or all of the arguments were not numbers

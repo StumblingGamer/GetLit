@@ -15,6 +15,7 @@ public final class GetLit extends JavaPlugin {
     private void loadCommands() {
         try {
             getCommand("getlit").setExecutor(new GetLitCommand(this));
+            getCommand("getlit").setTabCompleter(new TabCompleter());
         } catch (Exception ex) {
             log.toConsole("Unexpected error registering commands");
             log.toConsole(ex.getMessage());

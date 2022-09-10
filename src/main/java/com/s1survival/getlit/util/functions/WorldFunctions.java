@@ -70,7 +70,6 @@ public class WorldFunctions {
                             && block.getRelative(BlockFace.DOWN, 1).getType().isSolid()
                             && block.getLightFromBlocks() <= 4
                             && block.getLightLevel() <= 15
-                            // && block.getType() != Material.POINTED_DRIPSTONE
                     ) {
                         blocks.add(block);
                     }
