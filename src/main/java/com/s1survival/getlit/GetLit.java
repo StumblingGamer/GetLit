@@ -4,7 +4,12 @@ import com.s1survival.getlit.util.Log;
 import com.s1survival.getlit.data.Data;
 import com.s1survival.getlit.commands.*;
 
+import net.coreprotect.CoreProtect;
+import net.coreprotect.CoreProtectAPI;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import static org.bukkit.Bukkit.getServer;
 
 public final class GetLit extends JavaPlugin {
     public static final String internalName = "GetLit";
@@ -20,6 +25,28 @@ public final class GetLit extends JavaPlugin {
             log.toConsole("Unexpected error registering commands");
             log.toConsole(ex.getMessage());
         }
+    }
+
+    private CoreProtectAPI getCoreProtect() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("CoreProtect");
+
+        // Check that CoreProtect is loaded
+        if (plugin == null || !(plugin instanceof CoreProtect)) {
+            return null;
+        }
+
+        // Check that the API is enabled
+        CoreProtectAPI CoreProtect = ((CoreProtect) plugin).getAPI();
+        if (CoreProtect.isEnabled() == false) {
+            return null;
+        }
+
+        // Check that a compatible version of the API is loaded
+        if (CoreProtect.APIVersion() < 9) {
+            return null;
+        }
+
+        return CoreProtect;
     }
 
     @Override
@@ -38,6 +65,11 @@ public final class GetLit extends JavaPlugin {
         log.toConsole("empty",false);
 
         loadCommands();
+
+        CoreProtectAPI api = getCoreProtect();
+        if (api != null){ // Ensure we have access to the API
+            api.testAPI(); // Will print out "[CoreProtect] API test successful." in the console.
+        }
     }
 
     @Override

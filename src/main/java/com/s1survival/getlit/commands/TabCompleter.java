@@ -30,15 +30,16 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
                     switch(args[0].toLowerCase()) {
                         case "caves":
                             List<String> caves_radius = new ArrayList<>();
-                            //caves_radius.add("64");
+                            caves_radius.add("Radius");
                             caves_radius.add("128");
+                            caves_radius.add("256");
                             return caves_radius;
                         case "surface":
                             List<String> surface_radius = new ArrayList<>();
-                            //surface_radius.add("16");
-                            //surface_radius.add("32");
+                            surface_radius.add("Radius");
                             surface_radius.add("64");
-                            //surface_radius.add("128");
+                            surface_radius.add("128");
+                            surface_radius.add("256");
                             return surface_radius;
                     }
                 case 3:
@@ -52,6 +53,7 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
                         return topheight;
                     } else {
                         List<String> topheight = new ArrayList<>();
+                        topheight.add("Max Height");
                         topheight.add("64");
                         topheight.add("254");
                         topheight.add("320");

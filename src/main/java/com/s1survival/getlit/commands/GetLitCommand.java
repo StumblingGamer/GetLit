@@ -16,6 +16,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
 
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class GetLitCommand implements CommandExecutor {
+
     GetLit GetLit;
     public GetLitCommand(GetLit getLit) {
         GetLit = getLit;
@@ -114,7 +116,7 @@ public class GetLitCommand implements CommandExecutor {
                             final int topheight = StringFunctions.safeToInt(args[2]);  // May remove this, and just make it world height
 
                             // Set boundaries for the args
-                            if (radius > 128 || GetLit.data.spacing < 1 || topheight > WorldFunctions.worldHeight(sentBy)) {
+                            if (radius > 256 || GetLit.data.spacing < 1 || topheight > WorldFunctions.worldHeight(sentBy)) {
                                 Send.pluginUsage(sentBy);
                                 return true;
                             }
