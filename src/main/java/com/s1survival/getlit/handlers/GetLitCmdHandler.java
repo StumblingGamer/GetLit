@@ -90,9 +90,10 @@ public class GetLitCmdHandler {
 
                                 if (GetLit.data.skyLight && block.getLightFromBlocks() == 0) {
                                     block.setType(Material.TORCH, true);
-                                    CoreProtectAPI api = GetLit.getCoreProtect();
-                                    if (api != null){ // Ensure we have access to the API
-                                        api.logPlacement("GetLit", block.getLocation(), Material.TORCH, block.getBlockData());
+                                    CoreProtectAPI coreProtect = GetLit.getCoreProtect();
+                                    if (coreProtect != null){ // Ensure we have access to the API
+                                        coreProtect.logPlacement("GetLit_" + player.getName(), block.getLocation(), block.getType(), block.getData());
+                                        //boolean success = coreProtect.logPlacement("Notch", block.getLocation(), block.getType(), block.getData());
                                     }
                                     block.getState().update(true);
 

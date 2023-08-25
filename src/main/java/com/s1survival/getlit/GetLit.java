@@ -55,6 +55,7 @@ public final class GetLit extends JavaPlugin {
         instance=this;
         log = new Log(this);
         data = new Data(this);
+        CoreProtectAPI coreProtect = getCoreProtect();
 
         log.toConsole("§5   ______     __  §6__    _ __  ",false);
         log.toConsole("§5  / ____/__  / /_§6/ /   (_) /_ ",false);
@@ -66,9 +67,8 @@ public final class GetLit extends JavaPlugin {
 
         loadCommands();
 
-        CoreProtectAPI api = getCoreProtect();
-        if (api != null){ // Ensure we have access to the API
-            api.testAPI(); // Will print out "[CoreProtect] API test successful." in the console.
+        if (coreProtect != null){ // Ensure we have access to the API
+            coreProtect.testAPI(); // Will print out "[CoreProtect] API test successful." in the console.
         }
     }
 
