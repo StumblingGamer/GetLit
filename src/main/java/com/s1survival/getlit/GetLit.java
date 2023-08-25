@@ -27,7 +27,7 @@ public final class GetLit extends JavaPlugin {
         }
     }
 
-    private CoreProtectAPI getCoreProtect() {
+    public CoreProtectAPI getCoreProtect() {
         Plugin plugin = getServer().getPluginManager().getPlugin("CoreProtect");
 
         // Check that CoreProtect is loaded

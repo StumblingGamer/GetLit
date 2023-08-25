@@ -5,6 +5,7 @@ import com.s1survival.getlit.torch.PlacedTorch;
 import com.s1survival.getlit.torch.PlacedTorchResult;
 import com.s1survival.getlit.util.Send;
 import com.s1survival.getlit.util.functions.WorldFunctions;
+import net.coreprotect.CoreProtectAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -78,7 +79,7 @@ public class GetLitCmdHandler {
                                         }
                                         break;
                                     case "caves":
-                                        // Assumption = if block gets no light from sky, it is not in a cave.
+                                        // Assumption = if block gets no light from sky, it is in a cave.
                                         if (block.getRelative(BlockFace.UP, 1).getLightFromSky() == 0) {
                                             GetLit.data.skyLight = true;
                                         }
@@ -89,6 +90,10 @@ public class GetLitCmdHandler {
 
                                 if (GetLit.data.skyLight && block.getLightFromBlocks() == 0) {
                                     block.setType(Material.TORCH, true);
+                                    CoreProtectAPI api = GetLit.getCoreProtect();
+                                    if (api != null){ // Ensure we have access to the API
+                                        api.logPlacement("GetLit", block.getLocation(), Material.TORCH, block.getBlockData());
+                                    }
                                     block.getState().update(true);
 
                                     // record our torch setting activities
