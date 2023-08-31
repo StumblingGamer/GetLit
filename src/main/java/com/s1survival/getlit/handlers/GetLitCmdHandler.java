@@ -10,12 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.time.Instant;
 import java.util.*;
 
 public class GetLitCmdHandler {
@@ -23,10 +20,6 @@ public class GetLitCmdHandler {
     public GetLitCmdHandler(GetLit getLit) {
         // Take the instance of our main class and save in plugin
         GetLit = getLit;
-    }
-
-    public int longToIntCast(long number) {
-        return (int) number;
     }
 
     /**
@@ -125,7 +118,7 @@ public class GetLitCmdHandler {
                                         if (!isModified){
                                             if (level.equalsIgnoreCase("water")){
                                                 block.getRelative(BlockFace.DOWN, 1).setType(Material.GLOWSTONE, true);
-                                                if (coreProtect.logPlacement("GetLit", block.getRelative(BlockFace.DOWN, 1).getLocation(), block.getType(), block.getData())) {
+                                                if (coreProtect.logPlacement("GetLit", block.getRelative(BlockFace.DOWN, 1).getLocation(), block.getType(), block.getBlockData())) {
                                                     block.getState().update(true);
                                                     // record our torch setting activities
                                                     locations.add(block.getLocation());
@@ -133,7 +126,7 @@ public class GetLitCmdHandler {
                                                 }
                                             } else {
                                                 block.setType(Material.TORCH, true);
-                                                if (coreProtect.logPlacement("GetLit", block.getLocation(), block.getType(), block.getData())) {
+                                                if (coreProtect.logPlacement("GetLit", block.getLocation(), block.getType(), block.getBlockData())) {
                                                     block.getState().update(true);
                                                     // record our torch setting activities
                                                     locations.add(block.getLocation());
