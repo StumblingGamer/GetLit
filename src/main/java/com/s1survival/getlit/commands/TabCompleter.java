@@ -21,6 +21,7 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
                     List<String> arg1 = new ArrayList<>();
                     arg1.add("caves");
                     arg1.add("surface");
+                    arg1.add("water");
                     arg1.add("undo");
                     arg1.add("list");
                     arg1.add("help");
@@ -41,6 +42,13 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
                             surface_radius.add("128");
                             surface_radius.add("256");
                             return surface_radius;
+                        case "water":
+                            List<String> water_radius = new ArrayList<>();
+                            water_radius.add("Radius");
+                            water_radius.add("64");
+                            water_radius.add("128");
+                            water_radius.add("256");
+                            return water_radius;
                     }
                 case 3:
                     if (sender instanceof Player) {

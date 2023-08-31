@@ -10,8 +10,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.time.Instant;
 import java.util.*;
 
 public class GetLitCmdHandler {
@@ -19,6 +23,10 @@ public class GetLitCmdHandler {
     public GetLitCmdHandler(GetLit getLit) {
         // Take the instance of our main class and save in plugin
         GetLit = getLit;
+    }
+
+    public int longToIntCast(long number) {
+        return (int) number;
     }
 
     /**
@@ -58,7 +66,12 @@ public class GetLitCmdHandler {
                                     locations
                             );
 
-                            Send.playerMessage("Your world has been lit with " + result.get_numTorches() + " torches!", player);
+                            if (level.equalsIgnoreCase("water")){
+                                Send.playerMessage("Your world has been lit with " + result.get_numTorches() + " Glowstone Blocks!", player);
+                            } else {
+                                Send.playerMessage("Your world has been lit with " + result.get_numTorches() + " torches!", player);
+                            }
+
 
                             super.cancel();
 
@@ -67,6 +80,7 @@ public class GetLitCmdHandler {
                             //message to player was here
 
                             // for each eligible block place torch
+                            int timestamp = (int) (System.currentTimeMillis() / 1000L);
                             for (Block block : Objects.requireNonNull(WorldFunctions.getBlocksInRegion(player, radius, topheight, GetLit.data.spacing))) {
                                 block.getState().update(true);
                                 GetLit.data.skyLight = false;
@@ -74,13 +88,25 @@ public class GetLitCmdHandler {
                                 switch (level) {
                                     case "surface":
                                         // Assumption = if block gets light from sky, it is on the surface.
-                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() >= 1) {
+                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() >= 1
+                                                && (!block.getType().equals(Material.WATER)
+                                                && !block.getType().equals(Material.SEAGRASS))) {
                                             GetLit.data.skyLight = true;
                                         }
                                         break;
                                     case "caves":
                                         // Assumption = if block gets no light from sky, it is in a cave.
-                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() == 0) {
+                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() == 0
+                                                && (!block.getType().equals(Material.WATER)
+                                                && !block.getType().equals(Material.SEAGRASS))) {
+                                            GetLit.data.skyLight = true;
+                                        }
+                                        break;
+                                    case "water":
+                                        // Assumption = if block gets no light from sky, it is in a cave.
+                                        if (block.getRelative(BlockFace.UP, 1).getLightFromSky() >= 0
+                                                && (block.getType().equals(Material.WATER)
+                                                || block.getType().equals(Material.SEAGRASS))) {
                                             GetLit.data.skyLight = true;
                                         }
                                         break;
@@ -89,19 +115,35 @@ public class GetLitCmdHandler {
                                 block.getState().update(true);
 
                                 if (GetLit.data.skyLight && block.getLightFromBlocks() == 0) {
-                                    block.setType(Material.TORCH, true);
-                                    CoreProtectAPI coreProtect = GetLit.getCoreProtect();
+                                    CoreProtectAPI coreProtect = GetLit.getCoreProtect(); //instantiate the API
                                     if (coreProtect != null){ // Ensure we have access to the API
-                                        coreProtect.logPlacement("GetLit_" + player.getName(), block.getLocation(), block.getType(), block.getData());
-                                        //boolean success = coreProtect.logPlacement("Notch", block.getLocation(), block.getType(), block.getData());
-                                    }
-                                    block.getState().update(true);
 
-                                    // record our torch setting activities
-                                    locations.add(block.getLocation());
-                                    torchList.add(new PlacedTorch(player.getUniqueId(), block));
-                                }
-                            }  //for loop
+                                        // added to check if block was player placed
+                                        boolean isModified = coreProtect.blockLookup(block.getRelative(BlockFace.DOWN, 1), timestamp).size() > 0;
+                                        //List<String[]> lookup = coreProtect.blockLookup(block.getRelative(BlockFace.DOWN, 1), 12000);
+
+                                        if (!isModified){
+                                            if (level.equalsIgnoreCase("water")){
+                                                block.getRelative(BlockFace.DOWN, 1).setType(Material.GLOWSTONE, true);
+                                                if (coreProtect.logPlacement("GetLit", block.getRelative(BlockFace.DOWN, 1).getLocation(), block.getType(), block.getData())) {
+                                                    block.getState().update(true);
+                                                    // record our torch setting activities
+                                                    locations.add(block.getLocation());
+                                                    torchList.add(new PlacedTorch(player.getUniqueId(), block));
+                                                }
+                                            } else {
+                                                block.setType(Material.TORCH, true);
+                                                if (coreProtect.logPlacement("GetLit", block.getLocation(), block.getType(), block.getData())) {
+                                                    block.getState().update(true);
+                                                    // record our torch setting activities
+                                                    locations.add(block.getLocation());
+                                                    torchList.add(new PlacedTorch(player.getUniqueId(), block));
+                                                }
+                                            }
+                                        } // If block is not modified   [If]
+                                    } // Is API Null?                   [If]
+                                } // Should we place block?             [If]
+                            }  // For each block                        [for loop]
 
                             // reduce the spacing of torches by 2 for next iteration
                             if (GetLit.data.spacing <= 2) {
@@ -111,7 +153,7 @@ public class GetLitCmdHandler {
                             }
                         }
                     }
-                }.runTaskTimer(GetLit, 0, 10L); // repeat every half a tick
+                }.runTaskTimer(GetLit, 0, 40L); // repeat every half a tick (was 10L) | 20L = 1 tick
 
                 // Now we're done, add that list to our map in the Data class which we reference from our main instance
                 // We'll use the key we created as the key for the map, and we can always undo an individual change now

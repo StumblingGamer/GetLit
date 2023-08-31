@@ -101,12 +101,12 @@ public class GetLitCommand implements CommandExecutor {
                 switch (arguments.get(0).toLowerCase()) {
 
                     // Command to light up only blocks on the surface or caves
-                    case "surface": case "caves":
+                    case "surface": case "caves": case "water":
 
                         // Set subcommand string
                         String level = arguments.get(0).toLowerCase();
 
-                        // Check if last 3 args are numeric
+                        // Check if last 2 args are numeric
                         if (StringFunctions.isNumeric(arguments.get(1))
                                 && StringFunctions.isNumeric(arguments.get(2))) {
 

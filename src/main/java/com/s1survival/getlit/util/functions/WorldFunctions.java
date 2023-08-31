@@ -64,10 +64,13 @@ public class WorldFunctions {
                 {
                     Block block = Objects.requireNonNull(start.getWorld().getBlockAt(x, y, z));
                     // This is where we can apply a blacklist of placeable blocks
-                    if (block.getType().isAir()
-                            && block.getRelative(BlockFace.UP, 1).getType().isAir()
+                    if ((((block.getType().isAir() || block.getType().equals(Material.SNOW) || block.getType().equals(Material.GRASS))
+                                    && block.getRelative(BlockFace.UP, 1).getType().isAir())
+                                    || ((block.getType().equals(Material.WATER) || block.getType().equals(Material.SEAGRASS))
+                                            && block.getRelative(BlockFace.UP, 1).getType().equals(Material.WATER)))
                             && block.canPlace(Material.TORCH.createBlockData())
                             && block.getRelative(BlockFace.DOWN, 1).getType().isSolid()
+                            && !block.getRelative(BlockFace.DOWN, 1).getType().equals(Material.ICE)
                             && block.getLightFromBlocks() <= 4
                             && block.getLightLevel() <= 15
                     ) {
