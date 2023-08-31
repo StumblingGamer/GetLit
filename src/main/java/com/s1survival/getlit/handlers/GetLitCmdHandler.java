@@ -112,7 +112,7 @@ public class GetLitCmdHandler {
                                     if (coreProtect != null){ // Ensure we have access to the API
 
                                         // added to check if block was player placed
-                                        boolean isModified = coreProtect.blockLookup(block.getRelative(BlockFace.DOWN, 1), timestamp).size() > 0;
+                                        boolean isModified = !coreProtect.blockLookup(block.getRelative(BlockFace.DOWN, 1), timestamp).isEmpty();
                                         //List<String[]> lookup = coreProtect.blockLookup(block.getRelative(BlockFace.DOWN, 1), 12000);
 
                                         if (!isModified){
